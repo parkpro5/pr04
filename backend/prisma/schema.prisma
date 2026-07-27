@@ -1,0 +1,47 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+// 담당자 — 명부 업로드/조회/출력 같은 관리 기능 접근에만 사용된다.
+// "담당자 확인" 버튼(GiftReceipt.confirmedAt)은 로그인과 무관하게 동작하므로
+// 여기와 FK로 엮이지 않는다.
+model Staff {
+  id         String   @id @default(cuid())
+  employeeId String   @unique
+  name       String
+  createdAt  DateTime @default(now())
+}
+
+// 담당자가 업로드한 사전 선정 응답자 명부. 같은 회차를 재업로드하면 기존
+// 행을 전부 지우고 새로 채워 넣는다(재업로드 정책 확정 사항).
+model Roster {
+  id           String   @id @default(cuid())
+  round        String
+  respondentId String
+  name         String
+  createdAt    DateTime @default(now())
+
+  @@unique([round, respondentId])
+  @@index([round])
+}
+
+// 실제 기념품 수령 기록. Roster와 FK로 묶지 않는다 — 명부가 재업로드로
+// 통째로 교체돼도 이미 발급된 수령 기록은 그대로 남아야 하기 때문.
+model GiftReceipt {
+  id             String    @id @default(cuid())
+  round          String
+  respondentId   String
+  name           String
+  signatureImage String    @db.Text
+  signedAt       DateTime  @default(now())
+  confirmedAt    DateTime?
+
+  @@unique([round, respondentId])
+  @@index([round])
+}

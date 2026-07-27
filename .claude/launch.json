@@ -1,0 +1,17 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "pr04-backend",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev", "--prefix", "D:/dev/pr04/backend"],
+      "port": 4000
+    },
+    {
+      "name": "pr04-frontend",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev", "--prefix", "D:/dev/pr04/frontend"],
+      "port": 5173
+    }
+  ]
+}
