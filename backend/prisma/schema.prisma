@@ -15,6 +15,10 @@ model Staff {
   id         String   @id @default(cuid())
   employeeId String   @unique
   name       String
+  // 로그인 시 사번+성명과 함께 추가로 검증하는 공유 비밀키. 값은 DB에서
+  // 담당자가 직접 UPDATE로 채워 넣는다 — 채워지기 전까지는 어떤 값으로도
+  // 로그인이 성립하지 않는다(NULL과는 절대 일치하지 않으므로).
+  secretKey  String?
   createdAt  DateTime @default(now())
 }
 

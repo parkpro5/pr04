@@ -1,8 +1,8 @@
 const prisma = require('../../config/prismaClient');
 const { signStaffToken } = require('../../utils/jwt');
 
-async function findMatchingStaff(employeeId, name) {
-  return prisma.staff.findFirst({ where: { employeeId, name } });
+async function findMatchingStaff(employeeId, name, secretKey) {
+  return prisma.staff.findFirst({ where: { employeeId, name, secretKey } });
 }
 
 function toPublicStaff(staff) {

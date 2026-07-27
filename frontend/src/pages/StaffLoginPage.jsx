@@ -10,6 +10,7 @@ export default function StaffLoginPage() {
 
   const [employeeId, setEmployeeId] = useState('');
   const [name, setName] = useState('');
+  const [secretKey, setSecretKey] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
@@ -20,7 +21,7 @@ export default function StaffLoginPage() {
     setError('');
     setLoading(true);
     try {
-      const { token: newToken, staff } = await staffLogin(employeeId, name);
+      const { token: newToken, staff } = await staffLogin(employeeId, name, secretKey);
       setSession(newToken, staff);
       navigate('/staff/rosters', { replace: true });
     } catch (err) {
@@ -41,6 +42,15 @@ export default function StaffLoginPage() {
         <label>
           성명
           <input value={name} onChange={(e) => setName(e.target.value)} required />
+        </label>
+        <label>
+          비밀키
+          <input
+            type="password"
+            value={secretKey}
+            onChange={(e) => setSecretKey(e.target.value)}
+            required
+          />
         </label>
         {error && <p className="error-text">{error}</p>}
         <button type="submit" disabled={loading}>

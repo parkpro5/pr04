@@ -5,3 +5,6 @@ frontend/dist/
 backend/dist/
 .vercel/
 *.log
+
+.vercel
+.env*
