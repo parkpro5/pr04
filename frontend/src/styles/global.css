@@ -259,4 +259,12 @@ button.confirm-button {
   .print-only {
     display: block !important;
   }
+  .print-only .roster-table th,
+  .print-only .roster-table td {
+    padding: 2px 6px;
+    font-size: 0.8rem;
+  }
+  .print-only .roster-table tr {
+    page-break-inside: avoid;
+  }
 }
