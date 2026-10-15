@@ -178,6 +178,11 @@ export default function VerifyPage() {
           <button type="button" className="confirm-button" onClick={handleStaffConfirm} disabled={loading}>
             {loading ? '처리 중…' : '담당자 확인'}
           </button>
+          <div className="caution-text">
+            <p>&lt;주의사항&gt;</p>
+            <p>절대로 버튼을 직접 누르지 마세요!</p>
+            <p>본 화면을 담당자가 확인할 수 있게 제시하시면, 상품을 드립니다!</p>
+          </div>
           {error && <p className="error-text">{error}</p>}
         </div>
       )}

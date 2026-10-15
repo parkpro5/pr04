@@ -117,6 +117,17 @@ button.confirm-button {
   text-align: center;
 }
 
+.caution-text {
+  color: #1d4ed8;
+  font-weight: 700;
+  text-align: center;
+  line-height: 1.5;
+}
+
+.caution-text p {
+  margin: 0;
+}
+
 .info-list {
   display: grid;
   grid-template-columns: auto 1fr;

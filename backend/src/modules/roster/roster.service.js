@@ -90,8 +90,10 @@ async function getRosterWithReceipts(round) {
   const receipts = await prisma.giftReceipt.findMany({ where: { round } });
   const receiptMap = new Map(receipts.map((r) => [r.respondentId, r]));
 
-  return rosterRows.map((row, idx) => {
-    const receipt = receiptMap.get(row.respondentId);
+  const rows = rosterRows.map((row, idx) => {
+    // 담당자 확인이 끝난 기록만 수령으로 표시한다(미확인 서명은 수령 아님).
+    const found = receiptMap.get(row.respondentId);
+    const receipt = found?.confirmedAt ? found : null;
     return {
       no: idx + 1,
       respondentId: row.respondentId,
@@ -101,6 +103,19 @@ async function getRosterWithReceipts(round) {
       signatureImage: receipt?.signatureImage ?? null,
     };
   });
+
+  // 조회 정렬: 담당자 확인 일시가 최근인 순 → 미확인은 번호 오름차순.
+  // (인쇄는 프런트에서 번호 오름차순으로 다시 정렬한다.)
+  rows.sort((a, b) => {
+    if (a.confirmedAt && b.confirmedAt) {
+      return b.confirmedAt.getTime() - a.confirmedAt.getTime() || a.no - b.no;
+    }
+    if (a.confirmedAt) return -1;
+    if (b.confirmedAt) return 1;
+    return a.no - b.no;
+  });
+
+  return rows;
 }
 
 module.exports = { parseExcelBuffer, replaceRoster, listRounds, getRosterWithReceipts };

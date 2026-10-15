@@ -25,22 +25,29 @@ export default function RosterListPage() {
       .catch((err) => setError(err.response?.data?.error?.message ?? '회차 목록을 불러오지 못했습니다'));
   }, []);
 
-  useEffect(() => {
-    if (!round) {
+  function loadRows(targetRound) {
+    if (!targetRound) {
       setRows([]);
       return;
     }
     setLoading(true);
     setError('');
-    getRosterByRound(round)
+    getRosterByRound(targetRound)
       .then(setRows)
       .catch((err) => setError(err.response?.data?.error?.message ?? '명부를 불러오지 못했습니다'))
       .finally(() => setLoading(false));
+  }
+
+  useEffect(() => {
+    loadRows(round);
   }, [round]);
 
   function handlePrint() {
     window.print();
   }
+
+  // 화면 조회는 담당자 확인 최근순이지만 인쇄는 기존대로 번호 오름차순을 유지한다.
+  const printRows = [...rows].sort((a, b) => a.no - b.no);
 
   return (
     <div className="page-section">
@@ -58,6 +65,9 @@ export default function RosterListPage() {
               ))}
             </select>
           </label>
+          <button type="button" onClick={() => loadRows(round)} disabled={!round || loading}>
+            {loading ? '조회 중…' : '조회'}
+          </button>
           <button type="button" onClick={handlePrint} disabled={rows.length === 0}>
             출력
           </button>
@@ -115,7 +125,7 @@ export default function RosterListPage() {
             </tr>
           </thead>
           <tbody>
-            {rows.map((row) => (
+            {printRows.map((row) => (
               <tr key={row.respondentId}>
                 <td>{row.no}</td>
                 <td>{maskRespondentId(row.respondentId)}</td>
