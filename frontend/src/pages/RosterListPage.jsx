@@ -32,7 +32,7 @@ const SORTERS = {
 export default function RosterListPage() {
   const [rounds, setRounds] = useState([]);
   const [round, setRound] = useState('');
-  const [sortKey, setSortKey] = useState('no');
+  const [sortKey, setSortKey] = useState('confirmed');
   const [rows, setRows] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
