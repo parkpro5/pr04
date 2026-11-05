@@ -9,9 +9,30 @@ function formatDateTime(value) {
   return new Date(value).toLocaleString('ko-KR');
 }
 
+// 정렬 기준: 번호·성명은 오름차순, 담당자확인은 내림차순(최근 확인이 먼저, 미확인은 뒤에서 번호순).
+const SORTERS = {
+  confirmed: {
+    label: '담당자확인 (최근순)',
+    compare: (a, b) => {
+      if (a.confirmedAt && b.confirmedAt) {
+        return new Date(b.confirmedAt) - new Date(a.confirmedAt) || a.no - b.no;
+      }
+      if (a.confirmedAt) return -1;
+      if (b.confirmedAt) return 1;
+      return a.no - b.no;
+    },
+  },
+  no: { label: '번호 (오름차순)', compare: (a, b) => a.no - b.no },
+  name: {
+    label: '성명 (오름차순)',
+    compare: (a, b) => a.name.localeCompare(b.name, 'ko') || a.no - b.no,
+  },
+};
+
 export default function RosterListPage() {
   const [rounds, setRounds] = useState([]);
   const [round, setRound] = useState('');
+  const [sortKey, setSortKey] = useState('confirmed');
   const [rows, setRows] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -46,7 +67,8 @@ export default function RosterListPage() {
     window.print();
   }
 
-  // 화면 조회는 담당자 확인 최근순이지만 인쇄는 기존대로 번호 오름차순을 유지한다.
+  // 화면 정렬은 선택한 기준을 따르지만, 인쇄는 항상 번호 오름차순을 유지한다.
+  const sortedRows = [...rows].sort(SORTERS[sortKey].compare);
   const printRows = [...rows].sort((a, b) => a.no - b.no);
 
   return (
@@ -61,6 +83,16 @@ export default function RosterListPage() {
               {rounds.map((r) => (
                 <option key={r} value={r}>
                   {r}
+                </option>
+              ))}
+            </select>
+          </label>
+          <label>
+            정렬
+            <select value={sortKey} onChange={(e) => setSortKey(e.target.value)}>
+              {Object.entries(SORTERS).map(([key, s]) => (
+                <option key={key} value={key}>
+                  {s.label}
                 </option>
               ))}
             </select>
@@ -90,7 +122,7 @@ export default function RosterListPage() {
               </tr>
             </thead>
             <tbody>
-              {rows.map((row) => (
+              {sortedRows.map((row) => (
                 <tr key={row.respondentId}>
                   <td>{row.no}</td>
                   <td>{row.respondentId}</td>
